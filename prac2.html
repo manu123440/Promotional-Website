@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Rotating Navigation</title>
+	<style type="text/css">
+		* {
+			padding: 0;
+			margin: 0;
+			box-sizing: border-box;
+		}
+		html, body {
+			width: 100%;
+			height: 100vh;
+			font-family: monospace;
+			background: black;
+			overflow-x: hidden;
+		}
+		.container {
+			height: 100vh;
+			background-color: white;
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+			grid-template-rows: auto auto;
+			transition: transform 0.3s linear;
+			transform-origin: top left;
+			padding: 60px;
+		}
+		.container.show-nav {
+			transform: rotate(-15deg);
+		}
+		.rotate-container {
+			position: fixed;
+			top: -100px;
+			left: -100px;
+		}
+		.rotate {
+			width: 200px;
+			height: 200px;
+			border-radius: 50%;
+			background: orangered;
+			position: relative;
+		}
+		.rotate .btn {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			height: 100px;
+			color: white;
+			font-size: 30px;
+			cursor: pointer;
+			border: none;
+			background: transparent;
+		}
+		.btn#open {
+			left: 60%;
+		}
+		.btn#close {
+			left: 30%;
+			transform: rotate(90deg);
+		}
+		.container.show-nav .rotate-container {
+			transform: rotate(-70deg);
+		}
+		header {
+			grid-template-columns: 1/-1;
+			width: 90vw;
+			/*border: 1px solid red;*/
+			height: 50px;
+			display: flex;
+			justify-content: space-evenly;
+			align-items: center;
+		}
+		.logo img {
+			width: 50px;
+			height: 50px;
+		}
+		.heading {
+			font-size: 30px;
+			text-transform: uppercase;
+		}
+		section	{
+			grid-column: 1/-1;
+			width: 90vw;
+			height: 71vh;
+			margin-top: 2%;
+			/*border: 1px solid black;*/
+		}
+		.section-container {
+			width: inherit;
+			display: flex;
+		}
+		.about {
+			flex: 1;
+			width: 100%;
+			height: 66vh;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			border: 1px solid green;
+		}
+		.dwn-btn {
+			flex: 1;
+			border: 1px solid red;
+			/*height: 66vh;*/
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			background-image: linear-gradient(to right, green, yellow);
+		}
+		.dwn-btn a {
+			font-size: 30px;
+			text-transform: uppercase;
+			text-decoration: none;
+			color: white;
+		}
+		.dwn-btn a:hover {
+			transform: scale(0.89);
+		}
+		.follow {
+			flex: 1;
+			border: 1px solid blue;
+			/*height: 66vh;*/
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			justify-content: center;
+		}
+		.follow a {
+			margin-right: 5%;
+		}
+		.follow .image {
+			width: 170px;
+			height: 170px;
+			/*border: 1px solid red;*/
+			border-radius: 200px;
+			transition: transform 0.4s ease;
+		}
+		.follow .image:hover {
+			transform: scale(0.95);
+		}
+		.box {
+			position: fixed;
+			bottom: 0;
+			left: 0;
+			background-image: linear-gradient(to left, green, yellow);
+			width: 100%;
+			padding: 1.2%;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+		.box a {
+			text-decoration: none;
+			text-transform: uppercase;
+			color: orangered;
+			font-size: 25px;
+			letter-spacing: 1px;
+			font-weight: bold;
+			transition: transform 0.3s ease;
+		}
+		.box a:hover {
+			transform: scale(0.90);
+		}
+		.search {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			position: relative;
+			height: 50px;
+		}
+		#search-el {
+			padding: 8px;
+			font-size: 20px;
+			border: none;
+			width: 50px;
+			height: 50px;
+			transition: width 0.3s linear;
+		}
+		.sbtn {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 50px;
+			height: 50px;
+			border: none;
+			padding: 1% 2%;
+			background: gray;
+			font-size: 20px;
+			transition: transform 0.4s ease;
+			cursor: pointer;
+		}
+		.sbtn:focus, #search-el:focus {
+			outline: none;
+		}
+		.search.active #search-el {
+			width: 200px;
+			border: 1px solid black;
+		}
+		.search.active .sbtn{
+			transform: translateX(198px);
+		}
+		nav {
+			position: fixed;
+			bottom: 40px;
+			left: 0;
+		}
+		nav li {
+			transform: translateX(-100%);
+			z-index: 999;
+			list-style: none;
+			margin: 20px 10px;
+		}
+		nav li + li {
+			margin-left: 25px;
+			transform: translateX(-150%);
+		}
+		nav li + li + li {
+			margin-left: 35px;
+			transform: translateX(-200px);
+		}
+		nav li a {
+			font-size: 20px;
+			color: white;
+			text-decoration: none;
+			text-transform: uppercase;
+		}
+		.container.show-nav + nav li {
+			transform: translateX(0);
+		}
+		@media screen and (max-width: 500px) {
+			header {
+				width: 80vw;
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: space-between;
+				height: 70px;
+				padding: 0 2%;
+			}
+			.logo img {
+				width: 60px;
+				height: 40px;
+			}
+			.heading {
+				font-size: 18px;
+			}
+			.search, #search-el, .sbtn {
+				height: 30px;
+			}
+			section {
+				width: 80vw;
+				height: 71vh;
+			}
+			.section-container {
+				display: flex;
+				flex-direction: column;
+				height: 70vh;
+			}
+			.about {
+				height: 45vh;
+			}
+			.dwn-btn {
+				height: 10vh;
+			}
+			.dwn-btn a {
+				font-size: 20px;
+			}
+			.follow .image {
+				width: 50px;
+				height: 50px;
+			}
+			.box {
+				padding: 3%;
+			}
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<div class="rotate-container">
+			<div class="rotate">
+				<button class="btn" id="open">=</button>
+				<button class="btn" id="close">X</button>
+			</div>
+		</div>
+		<header>
+			<div class="logo"><img src="images/logo.png"></div>
+			<div class="heading">Website Name</div>
+			<div class="search">
+				<input type="text" id="search-el" placeholder="Search.....">
+				<button class="sbtn">#</button>
+			</div>
+		</header>
+		<section>
+			<div class="section-container">
+				<div class="about">
+					<h1>App Name</h1>
+					<p>Description about the App</p>
+				</div>
+				<div class="dwn-btn">
+					<a href="#">download the app now</a>
+				</div>
+				<div class="follow">
+					<a href="#"><img src="images/4.png" class="image"></a>
+					<a href="#"><img src="images/5.jpg" class="image"></a>
+					<a href="#"><img src="images/6.jpg" class="image"></a>
+					<a href="#"><img src="images/" class="image"></a>
+				</div>
+			</div>
+			<div class="box">
+				<a href="#">download the app</a>
+			</div>
+		</section>
+	</div>
+	<nav>
+		<li><a href="#">home</a></li>
+		<li><a href="#">about</a></li>
+		<li><a href="#">contacts</a></li>
+	</nav>
+
+	<script type="text/javascript">
+		let container = document.querySelector('.container');
+		let open = document.querySelector('#open');
+		let close = document.querySelector('#close');
+		let sbtn = document.querySelector('.sbtn');
+		let search = document.querySelector('.search');
+		let searchEl = document.querySelector('#search-el');
+
+		open.addEventListener('click', function() {
+			container.classList.add('show-nav');
+		});
+
+		close.addEventListener('click', function() {
+			container.classList.remove('show-nav');
+		});
+
+		sbtn.addEventListener('click', function() {
+			search.classList.toggle('active');
+			searchEl.focus();
+		});
+	</script>
+</body>
+</html>
